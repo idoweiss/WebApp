@@ -1,0 +1,148 @@
+﻿@page "/users"
+@rendermode InteractiveServer
+
+<h3>User List</h3>
+<p></p>
+<table class="table">
+    @* שורת הכותרת של הטבלה *@
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Email</th>
+    </tr>
+    @* לולאה שמיצרת את שורות נתוני הטבלה ממשתני הרשימה *@
+    @for (int i = 0; i < names.Count; i++)
+    {
+        <tr>
+            <td>@(i + 1)</td>   <td>@names[i]</td>  <td>@emails[i]</td>
+        </tr>
+    }
+</table>
+
+@* קו שמפריד בין הטבלה לכפתורים לשם עיצוב *@
+<hr>
+
+@* --- הוספת משתמש --- *@
+@* שדות קלט להוספת משתמש - מקושרים למשתנים ייעודיים להוספה *@
+
+@* שדה שם *@
+<text>Name:</text>
+<input @bind-value="addName" />
+<p></p>
+
+@* שדה אמייל *@
+<text>Email:</text>
+<input @bind-value="addEmail" />
+<p></p>
+
+@* כפתור להוספת משתמש *@
+@* "class="הוספנו עיצוב לכפתור באמצעות הוראת *@
+<button class="btn btn-primary" @onclick="AddUser">Add User</button>
+
+<hr>
+
+@* --- עדכון משתמש --- *@
+@* שדה קלט לבחירת המספר המזהה של המשתמש שאותו נעדכן *@
+<text>Id:</text>
+<input type="number" @bind-value="updateUserId" />
+<p></p>
+
+@* שדות קלט לעדכון משתמש - מקושרים למשתנים לעדכון *@
+
+@* שדה שם *@
+<text>Name:</text>
+<input @bind-value="updateName" />
+<p></p>
+
+@* שדה אימייל *@
+<text>Email:</text>
+<input @bind-value="updateEmail" />
+<p></p>
+
+@* כפתור לעדכון המשתמש *@
+<button class="btn btn-success" @onclick="UpdateUser">Update User</button>
+
+<hr>
+
+@* --- מחיקת משתמש --- *@
+@* שדה קלט לבחירת המספר המזהה של המשתמש שאותו נמחוק *@
+<text>Id:</text>
+<input type="number" @bind-value="deleteUserId" />
+<p></p>
+
+@* כפתור המחיקה *@
+<button class="btn btn-danger" @onclick="DeleteUser">Delete</button>
+
+@code {
+    // הרשימות שמכילות את המידע שנציג בטבלה
+    List<string> names = new();
+    List<string> emails = new();
+    // List<User> users = new()
+
+
+    // משתני קלט לפעולת הוספת משתמש
+    string addName = "";
+    string addEmail = "";
+
+    // משתני קלט לפעולת עדכון משתמש
+    int updateUserId;
+    string updateName = "";
+    string updateEmail = "";
+
+    // משתנה קלט למחיקת משתמש
+    int deleteUserId;
+
+    // הפעולה שמוסיפה משתמש חדש לרשימות
+    void AddUser()
+    {
+        //נוסיף ערכים לרשימות מהמשתנים ששמקושרים לשדות הקלט
+        names.Add(addName);
+        emails.Add(addEmail);
+
+        // ניקוי שדות ההוספה לאחר הפעולה
+        addName = "";
+        addEmail = "";
+    }
+
+    void UpdateUser()
+    {
+        //בדיקה שהמספר המזהה של המשתמש שהוזן בשדה הקלט תקין
+        //אם הוא גדול ממספר המשתמשים ברשימה או שלילי - נסיים את הפעולה מבלי לבצע את העדכון
+        if (updateUserId > names.Count || updateUserId < 1)
+        {
+            return;
+        }
+        //נעדכן ערכים ברשימות מהמשתנים ששמקושרים לשדות הקלט
+        //נעדכן את ש
+        names[updateUserId - 1] = updateName;
+        emails[updateUserId - 1] = updateEmail;
+    }
+
+    //הפעולה שמסירה משתמש חדש לרשימות
+    void DeleteUser()
+    {
+        //הדפסת מידע לקונסולה לצורך בדיקות
+        Console.WriteLine($"idToDelete: {deleteUserId} names.Count:{names.Count}");
+        //בדיקה שהמספר המזהה של המשתמש שהוזן בשדה הקלט תקין
+        //אם הוא גדול ממספר המשתמשים ברשימה או שלילי - נסיים את הפעולה מבלי לבצע את המחיקה
+        if (deleteUserId > names.Count || deleteUserId < 1)
+        {
+            return;
+        }
+        //אם הגענו לכאן - המספר תקין ונוכל למחוק את המשתמש מהרשימות
+        names.RemoveAt(deleteUserId - 1);
+        emails.RemoveAt(deleteUserId - 1);
+    }
+
+    // פעולה מיוחדת שמתבצעת כל פעם שהדף עולה, נשתמש בה להכניס ערכי דוגמא לרשימות
+    protected override void OnInitialized()
+    {
+        names.Add("Tom Cruise");
+        names.Add("Leonardo Decaprio");
+        names.Add("Brad Pitt");
+
+        emails.Add("tom.cruise@gmail.com");
+        emails.Add("leonardo.decaprio@gmail.com");
+        emails.Add("brad.pitt@gmail.com");
+    }
+}
