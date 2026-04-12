@@ -4,8 +4,8 @@ namespace WebApp
 
     public class UserService
     {
-        // פעולה בונה המאתחלת את הטבלה והנתונים
-        public UserService()
+        // פעולה בונה סטאטית שתרוץ רק פעם אחת ויחידה במהלך הריצה של השרת המאתחלת את הטבלה והנתונים
+        static UserService()
         {
             // יצירת טבלת משתמשים אם אינה קיימת
             DbHelper.RunSqlChange(@"
