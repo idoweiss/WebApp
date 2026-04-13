@@ -14,12 +14,13 @@
     </thead>
     <tbody>
         @* לולאה שמיצרת את שורות נתוני הטבלה ממשתני הרשימה *@
-        @for (int i = 0; i < names.Count; i++)
+        @for (int i = 0; i < users.Count; i++)
         {
             <tr>
-                <td>@(i + 1)</td>
-                <td>@names[i]</td>
-                <td>@emails[i]</td>
+                <td>@users[i].Id</td>
+                <td>@users[i].FullName</td>
+                <td>@users[i].UserName</td>
+                <td>@users[i].Email</td>
             </tr>
         }
     </tbody>
@@ -81,9 +82,10 @@
 
 @code {
     // הרשימות שמכילות את המידע שנציג בטבלה
-    List<string> names = new();
-    List<string> emails = new();
-    // List<User> users = new()
+    // List<string> names = new();
+    // List<string> emails = new();
+    List<User> users = new List<User>();
+    UserService userService = new UserService();
 
 
     // משתני קלט לפעולת הוספת משתמש
@@ -101,9 +103,11 @@
     // הפעולה שמוסיפה משתמש חדש לרשימות
     void AddUser()
     {
+        //FIXME
+
         //נוסיף ערכים לרשימות מהמשתנים ששמקושרים לשדות הקלט
-        names.Add(addName);
-        emails.Add(addEmail);
+        // names.Add(addName);
+        // emails.Add(addEmail);
 
         // ניקוי שדות ההוספה לאחר הפעולה
         addName = "";
@@ -112,43 +116,39 @@
 
     void UpdateUser()
     {
+        //FIXME
         //בדיקה שהמספר המזהה של המשתמש שהוזן בשדה הקלט תקין
         //אם הוא גדול ממספר המשתמשים ברשימה או שלילי - נסיים את הפעולה מבלי לבצע את העדכון
-        if (updateUserId > names.Count || updateUserId < 1)
-        {
-            return;
-        }
-        //נעדכן ערכים ברשימות מהמשתנים ששמקושרים לשדות הקלט
-        //נעדכן את ש
-        names[updateUserId - 1] = updateName;
-        emails[updateUserId - 1] = updateEmail;
+        // if (updateUserId > names.Count || updateUserId < 1)
+        // {
+        //     return;
+        // }
+        // נעדכן ערכים ברשימות מהמשתנים ששמקושרים לשדות הקלט
+        // נעדכן את ש
+        // names[updateUserId - 1] = updateName;
+        // emails[updateUserId - 1] = updateEmail;
     }
 
     //הפעולה שמסירה משתמש חדש לרשימות
     void DeleteUser()
     {
+        //FIXME
         //הדפסת מידע לקונסולה לצורך בדיקות
-        Console.WriteLine($"idToDelete: {deleteUserId} names.Count:{names.Count}");
+        // Console.WriteLine($"idToDelete: {deleteUserId} names.Count:{names.Count}");
         //בדיקה שהמספר המזהה של המשתמש שהוזן בשדה הקלט תקין
         //אם הוא גדול ממספר המשתמשים ברשימה או שלילי - נסיים את הפעולה מבלי לבצע את המחיקה
-        if (deleteUserId > names.Count || deleteUserId < 1)
-        {
-            return;
-        }
+        // if (deleteUserId > names.Count || deleteUserId < 1)
+        // {
+        //     return;
+        // }
         //אם הגענו לכאן - המספר תקין ונוכל למחוק את המשתמש מהרשימות
-        names.RemoveAt(deleteUserId - 1);
-        emails.RemoveAt(deleteUserId - 1);
+        // names.RemoveAt(deleteUserId - 1);
+        // emails.RemoveAt(deleteUserId - 1);
     }
 
     // פעולה מיוחדת שמתבצעת כל פעם שהדף עולה, נשתמש בה להכניס ערכי דוגמא לרשימות
     protected override void OnInitialized()
     {
-        names.Add("Tom Cruise");
-        names.Add("Leonardo Decaprio");
-        names.Add("Brad Pitt");
-
-        emails.Add("tom.cruise@gmail.com");
-        emails.Add("leonardo.decaprio@gmail.com");
-        emails.Add("brad.pitt@gmail.com");
+        users = userService.GetAllUsers();
     }
 }
