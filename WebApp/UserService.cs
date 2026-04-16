@@ -54,5 +54,20 @@ namespace WebApp
         {
             DbHelper.RunSqlChange($"UPDATE Users SET Email = '{newEmail}' WHERE Email = '{oldEmail}'");
         }
+
+        public void AddNewUser(User newUser)
+        {
+            DbHelper.RunSqlChange($"INSERT INTO Users (FullName, UserName, Password, Email) VALUES ('{newUser.FullName}', '{newUser.UserName}', '{newUser.Password}', '{newUser.Email}')");
+        }
+
+        public void UpdateUser(User user)
+        {
+            string sql = $"UPDATE Users SET FullName = '{user.FullName}', UserName = '{user.UserName}', Email = '{user.Email}' WHERE Id = {user.Id}";
+
+            DbHelper.RunSqlChange(sql);
+
+
+
+        }
     }
 }

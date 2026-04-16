@@ -9,18 +9,21 @@
         <tr>
             <th>Id</th>
             <th>Name</th>
+            <th>UserName</th>
             <th>Email</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @* לולאה שמיצרת את שורות נתוני הטבלה ממשתני הרשימה *@
-        @for (int i = 0; i < users.Count; i++)
+        @foreach (User item in users)
         {
             <tr>
-                <td>@users[i].Id</td>
-                <td>@users[i].FullName</td>
-                <td>@users[i].UserName</td>
-                <td>@users[i].Email</td>
+                <td>@item.Id</td>
+                <td>@item.FullName</td>
+                <td>@item.UserName</td>
+                <td>@item.Email</td>
+                <td><a class="btn btn-warning" href="/edit-user/@item.Id">Edit</a></td>
             </tr>
         }
     </tbody>
@@ -29,22 +32,8 @@
 @* קו שמפריד בין הטבלה לכפתורים לשם עיצוב *@
 <hr>
 
-@* --- הוספת משתמש --- *@
-@* שדות קלט להוספת משתמש - מקושרים למשתנים ייעודיים להוספה *@
+<a class="btn btn-primary" href="/add-user">+Add User</a>
 
-@* שדה שם *@
-<text>Name:</text>
-<input @bind-value="addName" />
-<p></p>
-
-@* שדה אמייל *@
-<text>Email:</text>
-<input @bind-value="addEmail" />
-<p></p>
-
-@* כפתור להוספת משתמש *@
-@* "class="הוספנו עיצוב לכפתור באמצעות הוראת *@
-<button class="btn btn-primary" @onclick="AddUser">Add User</button>
 
 <hr>
 
@@ -82,8 +71,6 @@
 
 @code {
     // הרשימות שמכילות את המידע שנציג בטבלה
-    // List<string> names = new();
-    // List<string> emails = new();
     List<User> users = new List<User>();
     UserService userService = new UserService();
 
