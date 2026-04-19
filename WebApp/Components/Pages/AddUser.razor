@@ -9,12 +9,12 @@
 @* --- הוספת משתמש --- *@
 @* שדות קלט להוספת משתמש - מקושרים למשתנים ייעודיים להוספה *@
 
-@* שדה שם *@
+@* שדה שם מלא *@
 <text>Name:</text>
 <input @bind-value="user.FullName" />
 <p></p>
 
-@*   *@
+@*שדה שם משתמש*@
 <text>User Name:</text>
 <input @bind-value="user.UserName" />
 <p></p>
@@ -24,9 +24,9 @@
 <input @bind-value="user.Email" />
 <p></p>
 
-@* שדה אמייל *@
+@* שדה ססמא *@
 <text>Password:</text>
-<input @bind-value="user.Password" />
+<input type="password" @bind-value="user.Password" />
 <p></p>
 
 
