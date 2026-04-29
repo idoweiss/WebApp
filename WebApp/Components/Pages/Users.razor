@@ -1,66 +1,87 @@
 ﻿@page "/users"
-@rendermode InteractiveServer
+@using WebApp
+@inject LoginService loginService
+@inject NavigationManager Nav
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 
-<h3>ניהול משתמשים</h3>
-<p></p>
-
-@* בניית טבלה להצגת נתוני המשתמשים מתוך מסד הנתונים *@
-<table class="table table-success table-bordered table-striped table-hover table-sm">
-    <thead>
-        @* שורת הכותרת של הטבלה *@
-        <tr>
-            <th>מזהה</th>
-            <th>שם מלא</th>
-            <th>שם משתמש</th>
-            <th>אימייל</th>
-            <th>עריכה</th>
-            <th>מחיקה</th>
-        </tr>
-    </thead>
-    <tbody>
-        @* לולאה העוברת על רשימת המשתמשים ומייצרת שורה עבור כל עצם ברשימה *@
-        @foreach (User item in users)
-        {
+@* מודאים שרק מנהל המערכת יכול לבצע שינויים במשתמשי המערכת *@
+@if (loggedUser != null)// && loggedUser.UserName == "admin")
+{
+    <h3>Users</h3>
+    <p></p>
+    <table class="table table-success table-bordered table-striped table-hover table-sm">
+        <thead>
+            @* שורת הכותרת של הטבלה *@
             <tr>
-                <td>@item.Id</td>
-                <td>@item.FullName</td>
-                <td>@item.UserName</td>
-                <td>@item.Email</td>
-                @* ניווט לדף עריכה עם שליחת המזהה של המשתמש הספציפי *@
-                <td><a class="btn btn-warning" href="/edit-user/@item.Id">עריכה</a></td>
-                @* הפעלת פעולת מחיקה בלחיצה, תוך שליחת המזהה כפרמטר *@
-                <td><button class="btn btn-danger" @onclick="() => DeleteUser(item.Id)">מחיקה</button></td>
+                <th>Id</th>
+                <th>Name</th>
+                <th>UserName</th>
+                <th>Email</th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @* לולאה שמיצרת את שורות נתוני הטבלה ממשתני הרשימה *@
+            @foreach (User item in users)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.FullName</td>
+                    <td>@item.UserName</td>
+                    <td>@item.Email</td>
+                    <td>
+                        <a class="btn btn-warning" href="/edit-user/@item.Id">Edit</a>
+                        <button class="btn btn-danger ms-2" @onclick="() => HandleDelete(item.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-<hr>
+    @* קו שמפריד בין הטבלה לכפתורים לשם עיצוב *@
+    <hr>
 
-@* כפתור מעבר לדף הוספת משתמש חדש *@
-<a class="btn btn-primary" href="/add-user">הוסף משתמש חדש +</a>
+    <a class="btn btn-primary" href="/add-user">+Add User</a>
+
+    @* כפתור התנתקות מהמערכת *@
+    <button class="btn btn-secondary ms-2" @onclick="HandleLogout">Logout</button>
+
+    <hr>
+}
 
 @code {
-    // הגדרת רשימה שתכיל את עצמי המשתמשים שיישלפו מהשירות
+    // הרשימות שמכילות את המידע שנציג בטבלה
     List<User> users = new List<User>();
-
-    // יצירת עצם של השירות המטפל בלוגיקה ובגישה למסד הנתונים
+    User loggedUser;
     UserService userService = new UserService();
 
-    // פעולה המתבצעת באופן אוטומטי עם טעינת הדף
-    protected override void OnInitialized()
+
+    protected override async Task OnInitializedAsync()
     {
-        // שליפת כל המשתמשים מהמסד ועדכון הרשימה המקושרת לתצוגה
+        // שליפת המשתמש המחובר מהשירות
+        loggedUser = await loginService.GetLoggedUser();
+
+        //מודאים שרק מנהל המערכת יכול לבצע שינויים במשתמשי המערכת
+        if (loggedUser == null)// || loggedUser.UserName != "admin")
+        {
+            Nav.NavigateTo("/");
+            return;
+        }
+
         users = userService.GetAllUsers();
     }
 
-    // פעולה המבצעת מחיקה של משתמש לפי המזהה שלו
-    void DeleteUser(int id)
+    private void HandleDelete(int id)
     {
-        // קריאה לפעולה בשירות המבצעת את פקודת המחיקה במסד הנתונים
         userService.DeleteUser(id);
-
-        // טעינה מחדש של הרשימה המעודכנת כדי שהשינוי ייראה מיד על המסך
         users = userService.GetAllUsers();
     }
+
+    // פעולה המבצעת התנתקות מהמערכת ומעבירה לדף הכניסה
+    private async Task HandleLogout()
+    {
+        await loginService.Logout();
+        Nav.NavigateTo("/");
+    }
+
 }

@@ -11,6 +11,8 @@ namespace WebApp
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+            builder.Services.AddScoped<LoginService>();
+
 
             var app = builder.Build();
 
